@@ -312,6 +312,7 @@ DRIVER_COMPANY_FILE_NAME = 'userprofile_company_full_table_sep.csv'
 USERPROFILE_FILE_NAME = 'userprofile_full_sep.csv'
 COMPANY_FILE_NAME = 'company_full_sep.csv'
 CLIENT_PREFERENCE_NAME = 'user_preference/user_config.csv'
+CLIENT_COMPANY_NAME = 'user_company/user_company.csv'
 HISTORICAL_STATE_FILE_NAME = 'historicalstate/{db_name}.csv'
 HISTORICAL_STATE_SEP_NOV = 'historicalstate_sep_nov/{db_name}.csv'
 HISTORICAL_STATE_2025 = 'historicalstate_2025_04/{db_name}.csv'
@@ -341,7 +342,7 @@ def pull_vehicle_data():
             cursor.execute(PULL_CLIENT_COMPANY_RELATION_SQL)
             driver_company_relationship = cursor.fetchall()
             client_company_column_names = [desc[0] for desc in cursor.description]
-            extract_csv(CLIENT_PREFERENCE_NAME, client_company_column_names, driver_company_relationship)
+            extract_csv(CLIENT_COMPANY_NAME, client_company_column_names, driver_company_relationship)
             # # Fetch the existing userprofile
             # cursor.execute(PULL_USERPROFILE_SQL)
             # userprofile = cursor.fetchall()
