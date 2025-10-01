@@ -338,7 +338,7 @@ def pull_vehicle_data():
             # I can add the driver and company relationship under this section
             # Fetch the existing client and company relationship
             # NOTE: This is one-time fetch. Only need to fetch for one time
-            cursor.execute(PULL_CLIENT_PREFERENCE)
+            cursor.execute(PULL_CLIENT_COMPANY_RELATION_SQL)
             driver_company_relationship = cursor.fetchall()
             client_company_column_names = [desc[0] for desc in cursor.description]
             extract_csv(CLIENT_PREFERENCE_NAME, client_company_column_names, driver_company_relationship)
