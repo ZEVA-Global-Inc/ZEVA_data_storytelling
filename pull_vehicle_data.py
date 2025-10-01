@@ -83,7 +83,7 @@ PULL_COMPANY_SQL = """
         client_company;
 """
 
-PULL_CLIENT_PREFERNECE = """
+PULL_CLIENT_PREFERENCE = """
     SELECT
         *
     FROM
@@ -98,7 +98,7 @@ PULL_VEHICLE_TRIP = """
     LEFT JOIN vehicle_vehicle ON 
         vehicle_trip.vehicle_id = vehicle_vehicle.id 
     WHERE 
-        start_timestamp between '2024-05-01' and '2024-08-31';
+        start_timestamp between '2025-07-01' and '2025-09-30';
 """
 
 PULL_VEHICLE_CHARGING = """
@@ -109,7 +109,7 @@ PULL_VEHICLE_CHARGING = """
     LEFT JOIN vehicle_vehicle ON 
         vehicle_chargesession.vehicle_id = vehicle_vehicle.id 
     WHERE 
-        start_timestamp between '2024-05-01' and '2024-08-31';
+        start_timestamp between '2025-07-01' and '2025-09-30';
 """
 
 PULL_VEHICLE_ANALYTICS = """
@@ -120,7 +120,7 @@ PULL_VEHICLE_ANALYTICS = """
     LEFT JOIN vehicle_vehicle ON 
         vehicle_vehicleanalytics.vehicle_id = vehicle_vehicle.id 
     WHERE 
-        timestamp between '2024-05-01' and '2024-08-31';
+        timestamp between '2025-07-01' and '2025-09-30';
 """
 
 PULL_VEHICLE_ALL = """
@@ -189,7 +189,7 @@ PULL_HISTORICAL_STATE_SQL = """
     FROM vehicle_vehiclehistoricalstate
     LEFT JOIN vehicle_vehicle on
         (vehicle_vehiclehistoricalstate.vehicle_id = vehicle_vehicle.id)
-    where timestamp >= '2025-05-01'
+    where timestamp >= '2025-07-01'
         order by vin asc, timestamp asc
 """
 
@@ -306,11 +306,12 @@ HISTORICAL_STATE_COLUMN = [
     "cop_activation_temperature",
     "driver_temp_setting",
 ]
+
 # Those three are best examples for the multiple data fetching
 DRIVER_COMPANY_FILE_NAME = 'userprofile_company_full_table_sep.csv'
 USERPROFILE_FILE_NAME = 'userprofile_full_sep.csv'
 COMPANY_FILE_NAME = 'company_full_sep.csv'
-CLIENT_PREFERENCE_NAME = 'client_userconfig_sep.csv'
+CLIENT_PREFERENCE_NAME = 'user_preference/user_config.csv'
 HISTORICAL_STATE_FILE_NAME = 'historicalstate/{db_name}.csv'
 HISTORICAL_STATE_SEP_NOV = 'historicalstate_sep_nov/{db_name}.csv'
 HISTORICAL_STATE_2025 = 'historicalstate_2025_04/{db_name}.csv'
@@ -337,10 +338,10 @@ def pull_vehicle_data():
             # I can add the driver and company relationship under this section
             # Fetch the existing client and company relationship
             # NOTE: This is one-time fetch. Only need to fetch for one time
-            # cursor.execute(PULL_CLIENT_PREFERNECE)
-            # driver_company_relationship = cursor.fetchall()
-            # client_company_column_names = [desc[0] for desc in cursor.description]
-            # extract_csv(CLIENT_PREFERENCE_NAME, client_company_column_names, driver_company_relationship)
+            cursor.execute(PULL_CLIENT_PREFERENCE)
+            driver_company_relationship = cursor.fetchall()
+            client_company_column_names = [desc[0] for desc in cursor.description]
+            extract_csv(CLIENT_PREFERENCE_NAME, client_company_column_names, driver_company_relationship)
             # # Fetch the existing userprofile
             # cursor.execute(PULL_USERPROFILE_SQL)
             # userprofile = cursor.fetchall()
@@ -359,36 +360,36 @@ def pull_vehicle_data():
             
     print('---------%s seconds to do the auth checking -----------' % (time.time() - start_time))
 
-    TEMP_DB_HOST = DB_HOST
-    TEMP_DB_PORT = DB_PORT
-    TEMP_DB_NAME = DB_NAME
-    TEMP_DB_USER = DB_USER
-    TEMP_DB_PASSWORD = DB_PASSWORD
-    temp_connection = None
-    temp_cursor = None
-    for db_info in db_info_list:
-        loop_start_time = time.time()
-        print(db_info)
-        if db_info[0] == 'auth':
-            continue
-        TEMP_DB_NAME = db_info[0]
-        TEMP_DB_USER = db_info[1]
-        TEMP_DB_PASSWORD = db_info[2]
-        with psycopg2.connect(
-            host=TEMP_DB_HOST, port=TEMP_DB_PORT, database=TEMP_DB_NAME, user=TEMP_DB_USER, password=TEMP_DB_PASSWORD
-        ) as temp_connection:
-            with temp_connection.cursor() as temp_cursor:
-                temp_cursor.execute(PULL_VEHICLE_INFOMATION_SUB)
-                result = temp_cursor.fetchall()
-                column_names = [desc[0] for desc in temp_cursor.description]
-                # print(column_names)
-                extract_csv(VEHICLE_INFO_EXAMPLE.format(db_name = TEMP_DB_NAME), column_names, result)
-                print('---------%s seconds to perform one time data fetching -----------' % (time.time() - loop_start_time))
-        if temp_cursor:
-            temp_cursor.close()
-        if temp_connection:
-            temp_connection.close()
-    print('---------%s seconds to perform all data fetching -----------' % (time.time() - start_time))
+    # TEMP_DB_HOST = DB_HOST
+    # TEMP_DB_PORT = DB_PORT
+    # TEMP_DB_NAME = DB_NAME
+    # TEMP_DB_USER = DB_USER
+    # TEMP_DB_PASSWORD = DB_PASSWORD
+    # temp_connection = None
+    # temp_cursor = None
+    # for db_info in db_info_list:
+    #     loop_start_time = time.time()
+    #     print(db_info)
+    #     if db_info[0] == 'auth':
+    #         continue
+    #     TEMP_DB_NAME = db_info[0]
+    #     TEMP_DB_USER = db_info[1]
+    #     TEMP_DB_PASSWORD = db_info[2]
+    #     with psycopg2.connect(
+    #         host=TEMP_DB_HOST, port=TEMP_DB_PORT, database=TEMP_DB_NAME, user=TEMP_DB_USER, password=TEMP_DB_PASSWORD
+    #     ) as temp_connection:
+    #         with temp_connection.cursor() as temp_cursor:
+    #             temp_cursor.execute(PULL_VEHICLE_INFOMATION_SUB)
+    #             result = temp_cursor.fetchall()
+    #             column_names = [desc[0] for desc in temp_cursor.description]
+    #             # print(column_names)
+    #             extract_csv(VEHICLE_INFO_EXAMPLE.format(db_name = TEMP_DB_NAME), column_names, result)
+    #             print('---------%s seconds to perform one time data fetching -----------' % (time.time() - loop_start_time))
+    #     if temp_cursor:
+    #         temp_cursor.close()
+    #     if temp_connection:
+    #         temp_connection.close()
+    # print('---------%s seconds to perform all data fetching -----------' % (time.time() - start_time))
 
 
 
