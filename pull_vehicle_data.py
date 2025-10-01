@@ -101,6 +101,15 @@ PULL_VEHICLE_TRIP = """
         start_timestamp between '2025-07-01' and '2025-09-30';
 """
 
+PULL_VEHICLE_COMPANY = """
+    SELECT 
+        * 
+    FROM 
+        vehicle_vehicle
+    LEFT JOIN client_company ON 
+        vehicle_vehicle.company_id = client_company.id;
+"""
+
 PULL_VEHICLE_CHARGING = """
     SELECT 
 	    *
@@ -322,6 +331,7 @@ HISTORICAL_VEHICLEANALYTICS_FILE_NAME = 'historicalanalytics/{db_name}.csv'
 VEHICLE_LIST_FILE_NAME = 'vehicles/{db_name}.csv'
 PULL_VEHICLE_TRIP_FILE_NAME = 'vehicle_trip_data/{db_name}.csv'
 VEHICLE_ANALYTICS_FILE_NAME = 'vehicle_vehicleanalytics/{db_name}.csv'
+SUB_VEHICLE_COMPANY_FILE_NAME = 'vehicle_company/{db_name}.csv'
 
 
 def pull_vehicle_data():
@@ -380,10 +390,10 @@ def pull_vehicle_data():
             host=TEMP_DB_HOST, port=TEMP_DB_PORT, database=TEMP_DB_NAME, user=TEMP_DB_USER, password=TEMP_DB_PASSWORD
         ) as temp_connection:
             with temp_connection.cursor() as temp_cursor:
-                temp_cursor.execute(PULL_VEHICLE_ANALYTICS)
+                temp_cursor.execute(PULL_VEHICLE_COMPANY)
                 result = temp_cursor.fetchall()
                 column_names = [desc[0] for desc in temp_cursor.description]
-                extract_csv(VEHICLE_ANALYTICS_FILE_NAME.format(db_name = TEMP_DB_NAME), column_names, result)
+                extract_csv(SUB_VEHICLE_COMPANY_FILE_NAME.format(db_name = TEMP_DB_NAME), column_names, result)
                 print('---------%s seconds to perform one time data fetching -----------' % (time.time() - loop_start_time))
         if temp_cursor:
             temp_cursor.close()
