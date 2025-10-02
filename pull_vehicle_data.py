@@ -98,7 +98,7 @@ PULL_VEHICLE_TRIP = """
     LEFT JOIN vehicle_vehicle ON 
         vehicle_trip.vehicle_id = vehicle_vehicle.id 
     WHERE 
-        start_timestamp between '2025-07-01' and '2025-09-30';
+        start_timestamp between '2025-01-01' and '2025-09-30';
 """
 
 PULL_VEHICLE_COMPANY = """
@@ -118,7 +118,7 @@ PULL_VEHICLE_CHARGING = """
     LEFT JOIN vehicle_vehicle ON 
         vehicle_chargesession.vehicle_id = vehicle_vehicle.id 
     WHERE 
-        start_timestamp between '2025-07-01' and '2025-09-30';
+        start_timestamp between '2025-01-01' and '2025-09-30';
 """
 
 PULL_VEHICLE_ANALYTICS = """
@@ -129,7 +129,7 @@ PULL_VEHICLE_ANALYTICS = """
     LEFT JOIN vehicle_vehicle ON 
         vehicle_vehicleanalytics.vehicle_id = vehicle_vehicle.id 
     WHERE 
-        timestamp between '2025-07-01' and '2025-09-30';
+        timestamp between '2025-01-01' and '2025-09-30';
 """
 
 PULL_VEHICLE_ALL = """
@@ -351,10 +351,10 @@ def pull_vehicle_data():
             # I can add the driver and company relationship under this section
             # Fetch the existing client and company relationship
             # NOTE: This is one-time fetch. Only need to fetch for one time
-            cursor.execute(PULL_COMPANY_SQL)
-            driver_company_relationship = cursor.fetchall()
-            client_company_column_names = [desc[0] for desc in cursor.description]
-            extract_csv(CLIENT_COMPANY_NAME, client_company_column_names, driver_company_relationship)
+            # cursor.execute(PULL_COMPANY_SQL)
+            # driver_company_relationship = cursor.fetchall()
+            # client_company_column_names = [desc[0] for desc in cursor.description]
+            # extract_csv(CLIENT_COMPANY_NAME, client_company_column_names, driver_company_relationship)
             # # Fetch the existing userprofile
             # cursor.execute(PULL_USERPROFILE_SQL)
             # userprofile = cursor.fetchall()
