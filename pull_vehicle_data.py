@@ -373,35 +373,35 @@ def pull_vehicle_data():
             
     print('---------%s seconds to do the auth checking -----------' % (time.time() - start_time))
 
-    # TEMP_DB_HOST = DB_HOST
-    # TEMP_DB_PORT = DB_PORT
-    # TEMP_DB_NAME = DB_NAME
-    # TEMP_DB_USER = DB_USER
-    # TEMP_DB_PASSWORD = DB_PASSWORD
-    # temp_connection = None
-    # temp_cursor = None
-    # for db_info in db_info_list:
-    #     loop_start_time = time.time()
-    #     print(db_info)
-    #     if db_info[0] == 'auth':
-    #         continue
-    #     TEMP_DB_NAME = db_info[0]
-    #     TEMP_DB_USER = db_info[1]
-    #     TEMP_DB_PASSWORD = db_info[2]
-    #     with psycopg2.connect(
-    #         host=TEMP_DB_HOST, port=TEMP_DB_PORT, database=TEMP_DB_NAME, user=TEMP_DB_USER, password=TEMP_DB_PASSWORD
-    #     ) as temp_connection:
-    #         with temp_connection.cursor() as temp_cursor:
-    #             temp_cursor.execute(PULL_VEHICLE_COMPANY)
-    #             result = temp_cursor.fetchall()
-    #             column_names = [desc[0] for desc in temp_cursor.description]
-    #             extract_csv(SUB_VEHICLE_COMPANY_FILE_NAME.format(db_name = TEMP_DB_NAME), column_names, result)
-    #             print('---------%s seconds to perform one time data fetching -----------' % (time.time() - loop_start_time))
-    #     if temp_cursor:
-    #         temp_cursor.close()
-    #     if temp_connection:
-    #         temp_connection.close()
-    # print('---------%s seconds to perform all data fetching -----------' % (time.time() - start_time))
+    TEMP_DB_HOST = DB_HOST
+    TEMP_DB_PORT = DB_PORT
+    TEMP_DB_NAME = DB_NAME
+    TEMP_DB_USER = DB_USER
+    TEMP_DB_PASSWORD = DB_PASSWORD
+    temp_connection = None
+    temp_cursor = None
+    for db_info in db_info_list:
+        loop_start_time = time.time()
+        print(db_info)
+        if db_info[0] == 'auth':
+            continue
+        TEMP_DB_NAME = db_info[0]
+        TEMP_DB_USER = db_info[1]
+        TEMP_DB_PASSWORD = db_info[2]
+        with psycopg2.connect(
+            host=TEMP_DB_HOST, port=TEMP_DB_PORT, database=TEMP_DB_NAME, user=TEMP_DB_USER, password=TEMP_DB_PASSWORD
+        ) as temp_connection:
+            with temp_connection.cursor() as temp_cursor:
+                temp_cursor.execute(PULL_VEHICLE_TRIP)
+                result = temp_cursor.fetchall()
+                column_names = [desc[0] for desc in temp_cursor.description]
+                extract_csv(PULL_VEHICLE_TRIP_FILE_NAME.format(db_name = TEMP_DB_NAME), column_names, result)
+                print('---------%s seconds to perform one time data fetching -----------' % (time.time() - loop_start_time))
+        if temp_cursor:
+            temp_cursor.close()
+        if temp_connection:
+            temp_connection.close()
+    print('---------%s seconds to perform all data fetching -----------' % (time.time() - start_time))
 
 
 
